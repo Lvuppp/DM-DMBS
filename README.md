@@ -4,216 +4,216 @@ Data models and database management systems.
 
 # Student Egor Bagrovets group 153504
 
-Проектом является CRM система для отслеживания процесса разработки.
+The project is a CRM system for tracking the development process.
 
-# Функциональные требования
+# Functional requirements
 
-Админ
-+ Управление работниками (CRUD)
-+ Закреплениие работников за командой 
-+ Управление проектами (CRUD)
-+ Отслеживане сроков выполнения задач
+Admin
++ Employee management (CRUD)
++ Employee assignment to a team 
++ Project management (CRUD)
++ Tracking deadlines
 
 PM
-+ Авторизация работника
-+ Управление задачами (CRUD)
-+ Отслеживание сроков выполнения проектов и задач
-+ Получение отчётности проектов и задач
-+ Уведомления о сроках выполнения и изменениях в задачах и проектах
-+ Изменение статуса задач
-+ Управление ивентами (CRUD)
-+ Уведомления о сроках выполнения и изменениях в задачах и проектах
++ Employee Authorization
++ Task management (CRUD)
++ Tracking project and task deadlines
++ Receive project and task reports
++ Notifications of due dates and changes in tasks and projects
++ Changing the status of tasks
++ Event Management (CRUD)
++ Notifications about due dates and changes in tasks and projects
 
-Работник
-+ Авторизация работника
-+ Комментирование задач
-+ Логирование времени выполнения задач
+Employee
++ Worker Authorization
++ Commenting on tasks
++ Logging of task completion time
 
-# Схема бд
-![База данных](dbSchema.png)
+# DB Schema
+![Database](dbSchema.png)
 
 
 # worker
 
-unique_id (PK, int) - Уникальный идентификатор сотрудника.
+unique_id (PK, int) - Unique identifier of the worker.
 
-team_id (PK, int) - Уникальный идентификатор команды, к которой принадлежит сотрудник.
+team_id (PK, int) - Unique identifier of the team the employee belongs to.
 
-first_name (varchar) - Имя сотрудника.
+first_name (varchar) - Employee's name.
 
-second_name (varchar) - Фамилия сотрудника.
+second_name (varchar) - Last name of the employee.
 
-email (varchar) - Электронная почта сотрудника.
+email (varchar) - E-mail of the employee.
 
-password_hash (varchar) - Пароль сотрудника.
+password_hash (varchar) - Employee's password.
 
-role_id (FK ,int) - Роль сотрудника в команде или системе.
+role_id (FK , int) - Employee's role in the team or system.
 
-- Связи с другими сущностями:
+- Relationships to other entities:
 
-team_id связан с PK из таблицы workers (one to one).
+team_id is linked to PK from the workers table (one to one).
 
-role_id связан с PK из таблицы roles
+role_id is linked to PK from the roles table
 
-Эта сущность описывает информацию о сотрудниках и их принадлежность к командам в CRM системе.
+This entity describes information about employees and their team membership in the CRM system.
 
 # role
 
-unique_id (PK, int) - Уникальный идентификатор проектного менеджера.
+unique_id (PK, int) - The unique identifier of the project manager.
 
-- Связи с другими сущностями:
+- Relationships to other entities:
 
-worker_id связан с PK сотрудника в таблице workers. (one to many)
+worker_id is associated with the employee's PK in the workers table. (one to many)
 
 # teams
 
-unique_id (PK, int) - Уникальный идентификатор команды.
+unique_id (PK, int) - Unique identifier of the team.
 
-project_id (FK, int) - Уникальный идентификатор проекта, к которому принадлежит данная команда.
+project_id (FK, int) - Unique identifier of the project to which this team belongs.
 
-name (varchar) - Название команды.
+name (varchar) - Team name.
 
-description (text) - Описание команды.
+description (text) - Description of the command.
 
-- Связи с другими сущностями:
+- Links to other entities:
 
-project_id связан с PK проекта в таблице projects (one wo many)
+project_id is linked to the project PK in the projects table (one wo many)
 
-По средствам этой сущности устанавливается отношение между сущностями projects и workers как many ot many
+By means of this entity a relationship is established between the entities projects and workers as many ot many.
 
-Эта сущность описывает информацию о командах, их названия, описания и принадлежность к проектам в CRM системе.
+This entity describes the information about teams, their names, descriptions and their belonging to projects in the CRM system.
 
 # projects
 
-unique_id (PK, int) - Уникальный идентификатор проекта.
+unique_id (PK, int) - The unique identifier of the project.
 
-project_manager_id (FK, int) - Уникальный идентификатор проектного менеджера, ответственного за проект.
+project_manager_id (FK, int) - Unique identifier of the project manager responsible for the project.
 
-title (varchar) - Название проекта.
+title (varchar) - Project title.
 
-description (text) - Описание проекта.
+description (text) - Project description.
 
-start_date (date) - Дата начала проекта.
+start_date (date) - Project start date.
 
-end_date (date) - Планируемая дата окончания проекта.
+end_date (date) - Planned end date of the project.
 
-status (varchar) - Статус проекта (например, "Активный", "Завершенный" и т. д.).
+status (varchar) - Project status (e.g. Active, Completed, etc.).
 
-version (FK, int) - Уникальный идентификатор версии проекта, если такая связь существует.
+version (FK, int) - Unique identifier of the project version, if such a relationship exists.
 
-- Связи с другими сущностями:
+- Relationships to other entities:
 
-project_manager_id связан с PK в таблице project_manager (one to many).
+project_manager_id is related to the PK in the project_manager table (one to many).
 
-version связан с PK версии проекта в таблице project_versions.
+version is linked to the PK of the project version in the project_versions table.
 
-Эта сущность описывает информацию о проектах, их названия, описания, датах начала и окончания, статусе и связь с проектным менеджером и версией проекта в CRM системе.
+This entity describes information about projects, their names, descriptions, start and end dates, status and relationship to the project manager and project version in the CRM system.
 
 # project_versions
 
-unique_id (PK, int) - Уникальный идентификатор версии проекта.
+unique_id (PK, int) - Unique identifier of the project version.
 
-version_description (text) - Описание версии проекта.
+version_description (text) - Project version description.
 
-release_date (date) - Дата выпуска версии.
+release_date (date) - Release date of the version.
 
-Эта сущность описывает информацию о версиях проектов, их описании и датах выпуска в CRM системе.
+This entity describes information about project versions, their description and release dates in the CRM system.
 
 # events
 
-unique_id (PK, int) - Уникальный идентификатор события.
+unique_id (PK, int) - The unique identifier of the event.
 
-project_id (FK, int) - Уникальный идентификатор проекта, к которому относится данное событие.
+project_id (FK, int) - Unique identifier of the project to which this event belongs.
 
-event_type (varchar) - Тип события (например, "Встреча", "Конференция", "Семинар" и т. д.).
+event_type (varchar) - Event type (e.g. "Meeting", "Conference", "Seminar", etc.).
 
-description (text) - Описание события.
+description (text) - Description of the event.
 
-start_date (date) - Дата начала события.
+start_date (date) - The start date of the event.
 
-- Связи с другими сущностями:
+- Relationships to other entities:
 
-project_id связан с PK проекта в таблице projects (one to many)
+project_id is associated with the project PK in the projects table (one to many)
 
-Эта сущность описывает информацию о событиях, связанных с проектами, их типах, описании и датах начала в CRM системе.
+This entity describes information about project related events, their types, description and start dates in the CRM system.
 
 # tasks
-unique_id (PK, int) - Уникальный идентификатор задачи.
+unique_id (PK, int) - Unique identifier of the task.
 
-assigned_user_id (FK, int) - Уникальный идентификатор пользователя (сотрудника), которому назначена данная задача.
+assigned_user_id (FK, int) - Unique identifier of the user (employee) to whom this task is assigned.
 
-project_id (FK, int) - Уникальный идентификатор проекта, к которому относится данная задача.
+project_id (FK, int) - Unique identifier of the project to which this task belongs.
 
-title (varchar) - Заголовок задачи.
+title (varchar) - Task title.
 
-description (text) - Описание задачи.
+description (text) - Task description.
 
-due_date (date) - Дедлайн выполнения задачи.
+due_date (date) - Deadline for task execution.
 
-priority (varchar) - Приоритет задачи (например, "Высокий", "Средний", "Низкий" и т. д.).
+priority (varchar) - Task priority (for example, "High", "Medium", "Low", etc.).
 
-- Связи с другими сущностями:
+- Relationships to other entities:
 
-assigned_user_id связан с PK сотрудника в таблице workers (one to many)
+assigned_user_id is linked to the PK of an employee in the workers table (one to many)
 
-project_id связан с PK проекта в таблице projects (one to many)
+project_id is linked to the PK of a project in the projects table (one to many).
 
-Эта сущность описывает информацию о задачах, их заголовке, описании, дедлайне, приоритете и связях с пользователями и проектами в CRM системе.
+This entity describes information about tasks, their title, description, deadline, priority, and links to users and projects in the CRM system.
 
 # task_logs
 
-unique_id (PK, int) - Уникальный идентификатор записи в логе задачи.
+unique_id (PK, int) - Unique identifier of the task log entry.
 
-worker_id (FK, int) - Идентификатор сотрудника, который внес запись в лог задачи.
+worker_id (FK, int) - The identifier of the worker who made the entry in the task log.
 
-task_id (int) - Уникальный идентификатор задачи, к которой относится данная запись в логе.
+task_id (int) - Unique identifier of the task to which this log entry belongs.
 
-description (text) - Описание изменения или события, связанного с задачей.
+description (text) - Description of the change or event associated with the task.
 
-edit_date (datetime) - Дата и время внесения записи в лог.
+edit_date (datetime) - The date and time the log entry was made.
 
-Связи с другими сущностями:
+Relationships to other entities:
 
-worker_id связан с сотрудником в таблице worker 
+worker_id is associated with an employee in the worker table 
 
-task_id связан с  задачей в таблице tasks 
+task_id is associated with a task in the tasks table 
 
-Эта сущность описывает логи и записи о событиях и изменениях, связанных с задачами, их описания, датах и связях с сотрудниками и задачами в CRM системе.
+This entity describes logs and records of events and changes related to tasks, their descriptions, dates and links to employees and tasks in the CRM system.
 
 # notifications
 
-unique_id (PK, int) - Уникальный идентификатор уведомления.
+unique_id (PK, int) - The unique identifier of the notification.
 
-recipient_worker_id (FK, int) - Уникальный идентификатор сотрудника-получателя уведомления.
+recipient_worker_id (FK, int) - Unique identifier of the notification recipient employee.
 
-send_date (datetime) - Дата и время отправки уведомления.
+send_date (datetime) - Date and time when the notification was sent.
 
-read_status (varchar) - Статус прочтения уведомления (например, "Прочитано", "Не прочитано").
+read_status (varchar) - Read status of the notification (for example, "Read", "Not read").
 
-text (text) - Текст уведомления.
+text (text) - The text of the notification.
 
-Связи с другими сущностями:
+Relationships to other entities:
 
-recipient_worker_id связан с PK сотрудника в таблице worker (one to many )
+recipient_worker_id is associated with the PK of the employee in the worker table (one to many )
 
-Эта сущность описывает информацию о уведомлениях, их тексте, дате отправки, статусе прочтения и связи с сотрудниками в CRM системе.
-
+This entity describes information about notifications, their text, date of sending, read status and connection with employees in CRM system.
 
 # comments
 
-unique_id (PK, int) - Уникальный идентификатор комментария.
+unique_id (PK, int) - Unique identifier of the comment.
 
-task_id (FK, int) - Уникальный идентификатор задачи, к которой относится данный комментарий.
+task_id (FK, int) - Unique identifier of the task to which this comment belongs.
 
-sender_id (FK, int) - Уникальный идентификатор отправителя комментария (предполагая, что это сотрудник или пользователь системы).
+sender_id (FK, int) - Unique identifier of the comment sender (assuming it is an employee or user of the system).
 
-text (text) - Текст комментария.
+text (text) - The text of the comment.
 
-send_date (datetime) - Дата и время отправки комментария.
+send_date (datetime) - The date and time the comment was sent.
 
-Связи с другими сущностями:
+Relationships to other entities:
 
-task_id связан с PK таблицы tasks
-sender_id связан с PK таблтцы workers
+task_id is associated with the PK of the tasks table
 
-Эта сущность описывает информацию о комментариях к задачам, их тексте и времени отправки в CRM системе.
+sender_id is linked to the PK of the workers table.
+
+This entity describes information about comments to tasks, their text and time of sending in CRM system.

@@ -1,0 +1,274 @@
+v///////// Database creation /////////
+
+create table comments
+(
+    unique_id int NOT NULL,
+    task_id int,
+    sender_id int,
+    text text,
+    send_date timestamp
+);
+
+create table events
+(
+    unique_id int NOT NULL,
+    event_type varchar(255),
+    description text COLLATE,
+    start_date timestamp,
+    project_id int,
+    end_date date
+);
+
+create table notifications
+(
+    unique_id int NOT NULL,
+    recipient_worker_id int,
+    send_date timestamp,
+    read_status boolean,
+    text text
+);
+
+create table project_versions
+(
+    version_description varchar(255),
+    release_date date,
+    tag varchar(30),
+    unique_id int NOT NULL
+);
+
+create table projects
+(
+    unique_id int NOT NULL,
+    project_manager_id int,
+    team_id int,
+    title varchar(255) ,
+    description text,
+    start_date date,
+    end_time date,
+    status int,
+    version int
+);
+
+create table roles
+(
+    unique_id int NOT NULL,
+    name varchar(255),
+    task_permission boolean,
+    project_permission boolean
+);
+
+create table statuses
+(
+    unique_id int NOT NULL,
+    name varchar(50)
+);
+
+create table task_logs
+(
+    unique_id int NOT NULL,
+    worker_id int,
+    task_id int,
+    description text,
+    edit_date timestamp
+);
+
+create table tasks
+(
+    unique_id int NOT NULL,
+    assigned_worker_id int,
+    project_id int,
+    title varchar(255),
+    description text,
+    due_date date,
+    priority varchar(255),
+    status int
+);
+
+create table teams
+(
+    unique_id int NOT NULL,
+    name varchar(255),
+    description varchar(255)
+);
+
+create table workers
+(
+    unique_id int NOT NULL,
+    first_name varchar(255),
+    second_name varchar(255),
+    email varchar(255),
+    password varchar(255),
+    role int,
+    team_id int
+);
+
+alter table comments
+add constraint comments foreign key (sender_id) REFERENCES workers (unique_id) ;
+
+alter table comments
+add constraint comments foreign key (task_id)REFERENCES tasks (unique_id) ;
+
+alter table events
+add constraint events foreign key (project_id) REFERENCES projects (unique_id) ;
+
+alter table notifications
+add constraint notifications foreign key (recipient_worker_id) REFERENCES workers (unique_id) ;
+
+alter table projects
+add constraint projects foreign key (project_manager_id) REFERENCES workers (unique_id) ;
+
+alter table projects
+add constraint projects_status_fkey foreign key (status) REFERENCES statuses (unique_id) ;
+
+alter table projects
+add constraint projects foreign key (team_id) REFERENCES teams (unique_id) ;
+
+alter table projects
+add constraint projects foreign key (version) REFERENCES project_versions (unique_id) ;
+
+alter table task_logs
+add constraint task_logs foreign key (task_id) REFERENCES tasks (unique_id) ;
+
+alter table task_logs
+add constraint task_logs foreign key (worker_id) REFERENCES workers (unique_id) ;
+
+alter table tasks
+add constraint tasks foreign key (assigned_worker_id) REFERENCES workers (unique_id) ;
+
+alter table tasks
+add constraint tasks foreign key (project_id) REFERENCES projects (unique_id) ;
+
+alter table tasks
+add constraint tasks_status foreign key (status) REFERENCES statuses (unique_id) ;
+
+alter table workers
+add constraint workers_role foreign key (role) REFERENCES roles (unique_id) ;
+
+alter table workers
+add constraint workers_team foreign key (team_id) REFERENCES teams (unique_id) ;
+CRM=# alter table workers alter column first_name set not null;
+ALTER TABLE
+CRM=# alter table workers alter column second_name set not null;
+ALTER TABLE
+CRM=# alter table workers alter column password set not null;
+ALTER TABLE
+CRM=# alter table workers alter column email set not null;
+ALTER TABLE
+CRM=# alter table teams alter column name set not null;
+ALTER TABLE
+CRM=# alter table roles alter column name set not null;
+ALTER TABLE
+CRM=# alter table statuses alter column name set not null;
+ALTER TABLE
+CRM=# alter table project_versions alter column tag set not null;
+ALTER TABLE
+CRM=# alter table project_versions alter column release_date set not null;
+ALTER TABLE
+CRM=# alter table projects alter column title set not null;
+ALTER TABLE
+CRM=# alter table projects alter column start_date set not null;
+ALTER TABLE
+CRM=# alter table projects alter column end_date set not null;
+ОШИБКА:  столбец "end_date" в таблице "projects" не существует
+CRM=# alter table projects alter column end_time set not null;
+ALTER TABLE
+CRM=# alter table projects alter column send_date set not null;
+ОШИБКА:  столбец "send_date" в таблице "projects" не существует
+CRM=# alter table notifications alter column send_date set not null;
+ALTER TABLE
+CRM=# alter table notifications alter column read_status set default false;
+ALTER TABLE
+CRM=# alter table tasks alter column title set not null;
+ALTER TABLE
+CRM=# alter table tasks alter column due_date set not null;
+ALTER TABLE
+CRM=# alter table tasks alter column priority set not null;
+ALTER TABLE
+CRM=# alter table events alter column event_type set not null;
+ALTER TABLE
+CRM=# alter table events alter column start_time set now();
+ОШИБКА:  ошибка синтаксиса (примерное положение: "now")
+LINE 1: alter table events alter column start_time set now();
+                                                       ^
+CRM=# alter table events alter column start_time set default now();
+ОШИБКА:  столбец "start_time" в таблице "events" не существует
+CRM=# alter table events alter column start_date set default now();
+ALTER TABLE
+CRM=# alter table task_logs alter column edit_date set default now();
+ALTER TABLE
+CRM=# alter table comments alter column send_date set default now();
+ALTER TABLE
+CRM=# alter table comments alter column text set not null;
+ALTER TABLE
+CRM=# alter table notifications alter column send_date set default now();
+ALTER TABLE
+ALTER TABLE
+CRM=# INSERT INTO roles (unique_id, name, task_permission, project_permission)
+CRM-# VALUES (1, 'Admin', true, true),
+CRM-#        (2, 'Project Manager', true, true),
+CRM-#        (3, 'Team Lead', true, false),
+CRM-#        (4, 'Developer', true, false);
+INSERT 0 4
+CRM=# INSERT INTO statuses (unique_id, name)
+CRM-# VALUES (1, 'Active'),
+CRM-#        (2, 'On Hold'),
+CRM-#        (3, 'Completed'),
+CRM-#        (4, 'Cancelled');
+INSERT 0 4
+CRM=# INSERT INTO teams (unique_id, name, description)
+CRM-# VALUES (1, 'Team 1', 'Description for Team 1'),
+CRM-#        (2, 'Team 2', 'Description for Team 2'),
+CRM-#        (3, 'Team 3', 'Description for Team 3'),
+CRM-#        (4, 'Team 4', 'Description for Team 4');
+INSERT 0 4
+CRM=# INSERT INTO workers (unique_id, first_name, second_name, email, password, role, team_id)
+CRM-# VALUES (1, 'John', 'Doe', 'john.doe@example.com', 'password123', 2, 1),
+CRM-#        (2, 'Jane', 'Smith', 'jane.smith@example.com', 'password456', 3, 2),
+CRM-#        (3, 'Mike', 'Johnson', 'mike.johnson@example.com', 'password789', 4, 1),
+CRM-#        (4, 'Anna', 'Clark', 'anna.clark@example.com', 'password321', 3, 3);
+INSERT 0 4
+CRM=# INSERT INTO project_versions (version_description, release_date, tag, unique_id)
+CRM-# VALUES ('Version 1.0', '2023-09-30', 'v1.0', 1),
+CRM-#        ('Version 1.1', '2023-10-05', 'v1.1', 2),
+CRM-#        ('Version 2.0', '2023-10-10', 'v2.0', 3),
+CRM-#        ('Version 2.1', '2023-10-15', 'v2.1', 4);
+INSERT 0 4
+CRM=# insert into workers (unique_id, first_name, second_name, email, password, role ,team_id)
+CRM-# values (5, 'Egor', 'Bagrovets', );
+ОШИБКА:  ошибка синтаксиса (примерное положение: ")")
+LINE 2: values (5, 'Egor', 'Bagrovets', );
+                                        ^
+CRM=# insert into workers (unique_id, first_name, second_name, email, password, role ,team_id)
+CRM-# values (5, 'Egor', 'Bagrovets', egor.bagrovets.eb@gmail.com, '123123', 2, 2);
+ОШИБКА:  таблица "bagrovets" отсутствует в предложении FROM
+LINE 2: values (5, 'Egor', 'Bagrovets', egor.bagrovets.eb@gmail.com,...
+                                        ^
+CRM=# values (5, 'Egor', 'Bagrovets', 'egor.bagrovets.eb@gmail.com', '123123', 2, 2);
+ column1 | column2 |  column3  |           column4           | column5 | column6 | column7
+---------+---------+-----------+-----------------------------+---------+---------+---------
+       5 | Egor    | Bagrovets | egor.bagrovets.eb@gmail.com | 123123  |       2 |       2
+(1 row)
+	
+
+CRM=# insert into workers (unique_id, first_name, second_name, email, password, role ,team_id)
+CRM-# values (5, 'Egor', 'Bagrovets',	 'egor.bagrovets.eb@gmail.com', '123123', 2, 2);
+INSERT 0 1
+CRM=# select * from workers;
+ unique_id | first_name | second_name |            email            |  password   | role | team_id
+-----------+------------+-------------+-----------------------------+-------------+------+---------
+         1 | John       | Doe         | john.doe@example.com        | password123 |    2 |       1
+         2 | Jane       | Smith       | jane.smith@example.com      | password456 |    3 |       2
+         3 | Mike       | Johnson     | mike.johnson@example.com    | password789 |    4 |       1
+         4 | Anna       | Clark       | anna.clark@example.com      | password321 |    3 |       3
+         5 | Egor       | Bagrovets   | egor.bagrovets.eb@gmail.com | 123123      |    2 |       2
+(5 rows)
+
+delete from project_versions;CRM=# alter table project_versions add column unique_id int;
+ALTER TABLE
+
+CRM=# alter table project_versions add unique_id type primary key;
+ОШИБКА:  столбец "unique_id" отношения "project_versions" уже существует
+CRM=# alter table project_versions add column project_id int;
+ALTER TABLE
+CRM=# alter table project_versions add foreign key (project_id) references projects(unique_id);
+ALTER TABLE
